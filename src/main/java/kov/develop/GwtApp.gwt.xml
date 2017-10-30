@@ -1,6 +1,6 @@
 <!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.8.0//EN"
         "http://gwtproject.org/doctype/2.8.0/gwt-module.dtd">
-<module>
+<module rename-to="gwtApp">
 
     <inherits name='com.google.gwt.user.User'/>
 
@@ -8,5 +8,6 @@
     <servlet path="/GwtAppService" class="kov.develop.server.GwtAppServiceImpl"/>
 
     <source path='client'/>
+    <source path='shared'/>
 
 </module>

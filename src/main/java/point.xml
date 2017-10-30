@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<points>
+    <point>
+        <id>1</id>
+        <country>Россия</country>
+        <sity>Новосибирск</sity>
+        <adress>Голубичная</adress>
+        <name>Центральный офис</name>
+        <phone>8-999-231-33</phone>
+        <type>ОТПРАВКА_И_ВЫДАЧА</type>
+    </point>
+    <point>
+        <id>2</id>
+        <country>США</country>
+        <sity>Нью-Йорк</sity>
+        <adress>Бродвей</adress>
+        <name>ЛитлОфис</name>
+        <phone>1-234-567-89</phone>
+        <type>ВЫДАЧА</type>
+    </point>
+    <point>
+        <id>3</id>
+        <country>Франция</country>
+        <sity>Париж</sity>
+        <adress>Монмантр</adress>
+        <name>Офис № 2</name>
+        <phone>1-23450-44</phone>
+        <type>ОТПРАВКА_И_ВЫДАЧА</type>
+    </point>
+    <point>
+        <id>4</id>
+        <country>Россия</country>
+        <sity>Новосибирск</sity>
+        <adress>Пирогова</adress>
+        <name>Пункт № 101</name>
+        <phone>1-654-65-456</phone>
+        <type>ВЫДАЧА</type>
+    </point>
+    <point>
+        <id>5</id>
+        <country>США</country>
+        <sity>Вашингтон</sity>
+        <adress>Лайн стрит</adress>
+        <name>Столичный</name>
+        <phone>1-64356-46-5</phone>
+        <type>ОТПРАВКА_И_ВЫДАЧА</type>
+    </point>
+    <point>
+        <id>6</id>
+        <country>Франция</country>
+        <sity>Париж</sity>
+        <adress>Елисейские поля</adress>
+        <name>Небольшой пункт</name>
+        <phone>9-0943-546-5</phone>
+        <type>ОТПРАВКА</type>
+    </point>
+</points>
