@@ -6,7 +6,7 @@
 
     <entry-point class='kov.develop.client.GwtApp'/>
 
-    <servlet path="/GwtAppService" class="kov.develop.server.GwtAppServiceImpl"/>
+    <servlet path="/gwtAppService" class="kov.develop.server.GwtAppServiceImpl"/>
 
     <source path='client'/>
     <source path='shared'/>
