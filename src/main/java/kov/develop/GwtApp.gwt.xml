@@ -5,9 +5,13 @@
     <inherits name='com.google.gwt.user.User'/>
 
     <entry-point class='kov.develop.client.GwtApp'/>
+
     <servlet path="/GwtAppService" class="kov.develop.server.GwtAppServiceImpl"/>
 
     <source path='client'/>
     <source path='shared'/>
+
+    <!-- allow Super Dev Mode -->
+    <add-linker name="xsiframe"/>
 
 </module>
