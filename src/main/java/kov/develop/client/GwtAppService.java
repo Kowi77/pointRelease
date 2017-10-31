@@ -2,19 +2,21 @@ package kov.develop.client;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
-import com.google.gwt.core.client.GWT;
+import kov.develop.shared.PointResult;
+import kov.develop.shared.PointType;
+
+import java.util.List;
 
 @RemoteServiceRelativePath("gwtAppService")
 public interface GwtAppService extends RemoteService {
-    /**
-     * Utility/Convenience class.
-     * Use GwtAppService.App.getInstance() to access static instance of GwtAppServiceAsync
-     */
-    public static class App {
-        private static final GwtAppServiceAsync ourInstance = (GwtAppServiceAsync) GWT.create(GwtAppService.class);
 
-        public static GwtAppServiceAsync getInstance() {
-            return ourInstance;
-        }
-    }
+    List<PointResult> getAllPoints();
+
+    List<PointResult> getAllPointsByType(PointType type);
+
+    List<PointResult> getAllPointsByTypeAndCountry(String type, String country);
+
+    List<PointResult> getAllPointsByTypeAndCountryAndSity(String type, String country, String sity);
+
+    PointResult getPoint(int id);
 }
