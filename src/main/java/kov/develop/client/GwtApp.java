@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
  **/
 public class GwtApp implements EntryPoint {
 
+    protected  ListDataProvider<PointResult> dataProvider;
+    protected final CellTable<PointResult> table = new CellTable<PointResult>();
     //Main Table Panel
     final VerticalPanel mainPanel = new VerticalPanel();
     //Choice Panel
@@ -36,7 +38,7 @@ public class GwtApp implements EntryPoint {
     private final GwtAppServiceAsync gwtAppService = GWT.create(GwtAppService.class);
 
     //Fill table with dynamic loading data
-    private ListDataProvider<PointResult> fillTable(ListDataProvider<PointResult> dataProvider) {
+    private void fillTable() {
         this.gwtAppService.getAllPoints(new AsyncCallback<List<PointResult>>() {
             @Override
             public void onFailure(Throwable throwable) {
@@ -45,16 +47,15 @@ public class GwtApp implements EntryPoint {
 
             @Override
             public void onSuccess(List<PointResult> points) {
+                RootPanel.get().add(new HTML("ver 1.0"));
                 pointsList = new ArrayList<>(points);
-                dataProvider.getList().addAll(points);
-                refreshChoicePanel(pointsList);
+                refreshChoicePanelAndDataProvider(points);
             }
         });
-        return dataProvider;
     }
 
     //Fill table with dynamic loading data by type
-    private ListDataProvider<PointResult> fillTableByType(PointType type, ListDataProvider<PointResult> dataProvider) {
+    private void fillTableByType(PointType type) {
         this.gwtAppService.getAllPointsByType(type, new AsyncCallback<List<PointResult>>() {
             @Override
             public void onFailure(Throwable throwable) {
@@ -64,16 +65,13 @@ public class GwtApp implements EntryPoint {
             @Override
             public void onSuccess(List<PointResult> points) {
                 filteredList = new ArrayList<>(points);
-                dataProvider.getList().addAll(points);
-                RootPanel.get().add(new HTML("In method:  " + dataProvider.getList().size()));
-                refreshChoicePanel(filteredList);
+                refreshChoicePanelAndDataProvider(points);
             }
         });
-        return dataProvider;
     }
 
     //Fill table with dynamic loading data by Type and Country
-    private ListDataProvider<PointResult> fillTableByTypeAndCountry(String type, String country, ListDataProvider<PointResult> dataProvider) {
+    private void fillTableByTypeAndCountry(String type, String country) {
         this.gwtAppService.getAllPointsByTypeAndCountry(type, country, new AsyncCallback<List<PointResult>>() {
             @Override
             public void onFailure(Throwable throwable) {
@@ -83,15 +81,13 @@ public class GwtApp implements EntryPoint {
             @Override
             public void onSuccess(List<PointResult> points) {
                 filteredList = new ArrayList<>(points);
-                dataProvider.getList().addAll(points);
-                refreshChoicePanel(filteredList);
+                refreshChoicePanelAndDataProvider(points);
             }
         });
-        return dataProvider;
     }
 
     //Fill table with dynamic loading data by Type and Country and Sity
-    private ListDataProvider<PointResult> fillTableByTypeAndCountryAndSity(String type, String country, String sity, ListDataProvider<PointResult> dataProvider) {
+    private void fillTableByTypeAndCountryAndSity(String type, String country, String sity) {
         this.gwtAppService.getAllPointsByTypeAndCountryAndSity(type, country, sity, new AsyncCallback<List<PointResult>>() {
             @Override
             public void onFailure(Throwable throwable) {
@@ -101,11 +97,9 @@ public class GwtApp implements EntryPoint {
             @Override
             public void onSuccess(List<PointResult> points) {
                 filteredList = new ArrayList<>(points);
-                dataProvider.getList().addAll(points);
-                refreshChoicePanel(filteredList);
+                refreshChoicePanelAndDataProvider(points);
             }
         });
-        return dataProvider;
     }
 
 
@@ -120,38 +114,25 @@ public class GwtApp implements EntryPoint {
         RootPanel.get("choicePanelContainer").add(choicePanel);
         RootPanel.get("mainPanelContainer").add(mainPanel);
 
-        // Create table
-        CellTable<PointResult> table = new CellTable<PointResult>();
-        ListDataProvider<PointResult> dataProvider = GwtUtil.createTable(table);
+        // Create table and dataProvaider
+        dataProvider = GwtUtil.createTable(table);
 
         //Fill table
-        fillTable(dataProvider);
+        fillTable();
         mainPanel.add(table);
-
-        // Fill choicePanel
-        //  choicePanel.setSpacing(5);
-        //  choicePanel.add(typePanel.getListBox());
-        //countryPanel.refreshPanel(pointsList.stream().map(p -> p.getCountry()).collect(Collectors.toSet()));
-        // choicePanel.add(countryPanel);
-        // sityPanel.refreshPanel(pointsList.stream().map(p -> p.getSity()).collect(Collectors.toSet()));
-        // choicePanel.add(sityPanel);
 
         //Type handler
         typePanel.getListBox().addChangeHandler(new ChangeHandler() {
             @Override
             public void onChange(ChangeEvent event) {
                 String item = typePanel.getListBox().getSelectedItemText();
-                mainPanel.clear();
-                CellTable<PointResult> table = new CellTable<PointResult>();
-                ListDataProvider<PointResult> dataProvider = GwtUtil.createTable(table);
                 if (item.equals("")){
-                    fillTable(dataProvider);
+                    fillTable();
                 }
                 else {
                     PointType type = PointType.valueOf(item);
-                    fillTableByType(type, dataProvider);
+                    fillTableByType(type);
                 }
-                mainPanel.add(table);
             }
         });
         //Country handler
@@ -160,19 +141,15 @@ public class GwtApp implements EntryPoint {
             public void onChange(ChangeEvent event) {
                 String typeItem = typePanel.getListBox().getSelectedItemText();
                 String countryItem = countryPanel.getListBox().getSelectedItemText();
-                mainPanel.clear();
-                CellTable<PointResult> table = new CellTable<PointResult>();
-                ListDataProvider<PointResult> dataProvider = GwtUtil.createTable(table);
                 if (countryItem.equals("") && typeItem.equals("")){
-                    fillTable(dataProvider);
+                    fillTable();
                 }
                 else if (countryItem.equals("")){
-                    fillTableByType(PointType.valueOf(typeItem), dataProvider);
+                    fillTableByType(PointType.valueOf(typeItem));
                 }
                 else {
-                    fillTableByTypeAndCountry(typeItem, countryItem, dataProvider);
+                    fillTableByTypeAndCountry(typeItem, countryItem);
                 }
-                mainPanel.add(table);
             }
         });
 
@@ -182,31 +159,37 @@ public class GwtApp implements EntryPoint {
             public void onChange(ChangeEvent event) {
                 String typeItem = typePanel.getListBox().getSelectedItemText();
                 String countryItem = countryPanel.getListBox().getSelectedItemText();
-                mainPanel.clear();
-                CellTable<PointResult> table = new CellTable<PointResult>();
-                ListDataProvider<PointResult> dataProvider = GwtUtil.createTable(table);
-                if (countryItem.equals("") && typeItem.equals("")){
-                    fillTable(dataProvider);
+                String sityItem = sityPanel.getListBox().getSelectedItemText();
+                if (countryItem.equals("") && typeItem.equals("") && sityItem.equals("")){
+                    fillTable();
                 }
-                else if (countryItem.equals("")){
-                    fillTableByType(PointType.valueOf(typeItem), dataProvider);
+                else if (countryItem.equals("") && sityItem.equals("")){
+                    fillTableByType(PointType.valueOf(typeItem));
+                }
+                else if (sityItem.equals("")){
+                    fillTableByTypeAndCountry(typeItem, countryItem);
                 }
                 else {
-                    fillTableByTypeAndCountry(typeItem, countryItem, dataProvider);
+                    fillTableByTypeAndCountryAndSity(typeItem, countryItem, sityItem);
                 }
-                mainPanel.add(table);
             }
         });
     }
 
 
 
-    public void refreshChoicePanel(List<PointResult> points){
+    public void refreshChoicePanelAndDataProvider(List<PointResult> points){
+
         choicePanel.clear();
         choicePanel.add(typePanel.getListBox());
         countryPanel.refreshPanel(points.stream().map(p -> p.getCountry()).collect(Collectors.toSet()));
         sityPanel.refreshPanel(points.stream().map(p -> p.getSity()).collect(Collectors.toSet()));
         choicePanel.add(countryPanel);
         choicePanel.add(sityPanel);
+
+        dataProvider.getList().clear();
+        dataProvider.getList().addAll(points);
+        dataProvider.flush();
+        dataProvider.refresh();
     }
 }

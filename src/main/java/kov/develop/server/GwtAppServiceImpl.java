@@ -46,6 +46,7 @@ public class GwtAppServiceImpl extends RemoteServiceServlet implements GwtAppSer
         return new PointResult(repository.getPoint(id));
     }
 
+    // Refresh DB after refresh datafile (point.xml)
     private Thread initLoader(){
         return new Thread(new Runnable() {
             @Override
@@ -55,9 +56,8 @@ public class GwtAppServiceImpl extends RemoteServiceServlet implements GwtAppSer
                         PointRepository.readAllFromXml(dataFile);
                         lastModified = new File(dataFile).lastModified();
                     }
-                    System.out.println(new File(dataFile).lastModified() + new File(dataFile).getAbsolutePath());
                     try {
-                        Thread.sleep(10000);
+                        Thread.sleep(30000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
