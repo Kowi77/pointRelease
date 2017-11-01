@@ -19,4 +19,6 @@ public interface GwtAppService extends RemoteService {
     List<PointResult> getAllPointsByTypeAndCountryAndSity(String type, String country, String sity);
 
     PointResult getPoint(int id);
+
+    Long getModifiedTime ();
 }

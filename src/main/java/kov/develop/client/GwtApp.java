@@ -5,6 +5,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.view.client.ListDataProvider;
@@ -20,14 +21,18 @@ import java.util.stream.Collectors;
  **/
 public class GwtApp implements EntryPoint {
 
+    private static long lastModified = Long.MIN_VALUE;
+    private boolean isModified = true;
+
     protected  ListDataProvider<PointResult> dataProvider;
     protected final CellTable<PointResult> table = new CellTable<PointResult>();
+    protected final SimplePager pager = new SimplePager();
     //Main Table Panel
     final VerticalPanel mainPanel = new VerticalPanel();
     //Choice Panel
     final HorizontalPanel choicePanel = new HorizontalPanel();
     //Full cache data
-    List<PointResult> pointsList;
+    List<PointResult> pointsList = new ArrayList<>();
     //Filtered cache data
     List<PointResult> filteredList;
     //Drop boxes panels
@@ -37,8 +42,18 @@ public class GwtApp implements EntryPoint {
 
     private final GwtAppServiceAsync gwtAppService = GWT.create(GwtAppService.class);
 
-    //Fill table with dynamic loading data
+
     private void fillTable() {
+        //At first fill table by cache data
+        refreshChoicePanelAndDataProvider(pointsList);
+
+        //If DB is not modified, exit from method
+        checkModified();
+        if (!isModified){
+            return;
+        }
+
+        //Fill table with dynamic loading data
         this.gwtAppService.getAllPoints(new AsyncCallback<List<PointResult>>() {
             @Override
             public void onFailure(Throwable throwable) {
@@ -47,15 +62,23 @@ public class GwtApp implements EntryPoint {
 
             @Override
             public void onSuccess(List<PointResult> points) {
-                RootPanel.get().add(new HTML("ver 1.0"));
+                RootPanel.get().add(new HTML("ver 4.0"));
                 pointsList = new ArrayList<>(points);
                 refreshChoicePanelAndDataProvider(points);
             }
         });
     }
 
-    //Fill table with dynamic loading data by type
+
     private void fillTableByType(PointType type) {
+        //At first fill table by cache data
+        refreshChoicePanelAndDataProvider(pointsList.stream().filter(p -> p.getType().equals(type)).collect(Collectors.toList()));
+
+        //If DB is not modified, exit from method
+        checkModified();
+        if (!isModified) return;
+
+        //Fill table with dynamic loading data by type
         this.gwtAppService.getAllPointsByType(type, new AsyncCallback<List<PointResult>>() {
             @Override
             public void onFailure(Throwable throwable) {
@@ -70,8 +93,17 @@ public class GwtApp implements EntryPoint {
         });
     }
 
-    //Fill table with dynamic loading data by Type and Country
+
     private void fillTableByTypeAndCountry(String type, String country) {
+        //At first fill table by cache data
+
+        refreshChoicePanelAndDataProvider(pointsList.stream().filter(p -> p.getType().equals(PointType.valueOf(type))).filter(p -> p.getCountry().equals(country)).collect(Collectors.toList()));
+
+        //If DB is not modified, exit from method
+        checkModified();
+        if (!isModified) return;
+
+        //Fill table with dynamic loading data by Type and Country
         this.gwtAppService.getAllPointsByTypeAndCountry(type, country, new AsyncCallback<List<PointResult>>() {
             @Override
             public void onFailure(Throwable throwable) {
@@ -88,6 +120,14 @@ public class GwtApp implements EntryPoint {
 
     //Fill table with dynamic loading data by Type and Country and Sity
     private void fillTableByTypeAndCountryAndSity(String type, String country, String sity) {
+        //At first fill table by cache data
+        refreshChoicePanelAndDataProvider(pointsList.stream().filter(p -> p.getType().equals(PointType.valueOf(type)) && p.getCountry().equals(country) && p.getSity().equals(sity)).collect(Collectors.toList()));
+
+        //If DB is not modified, exit from method
+        checkModified();
+        if (!isModified) return;
+
+        //Fill table with dynamic loading data by Type and Country and Sity
         this.gwtAppService.getAllPointsByTypeAndCountryAndSity(type, country, sity, new AsyncCallback<List<PointResult>>() {
             @Override
             public void onFailure(Throwable throwable) {
@@ -102,9 +142,6 @@ public class GwtApp implements EntryPoint {
         });
     }
 
-
-
-
     /**
      * This is the entry point method.
      */
@@ -114,12 +151,18 @@ public class GwtApp implements EntryPoint {
         RootPanel.get("choicePanelContainer").add(choicePanel);
         RootPanel.get("mainPanelContainer").add(mainPanel);
 
-        // Create table and dataProvaider
+        // Create table with paging and dataProvaider
         dataProvider = GwtUtil.createTable(table);
+        pager.setDisplay(table);
+        pager.setPageSize(30);
 
-        //Fill table
+        //Fill table and display it with paging
         fillTable();
         mainPanel.add(table);
+        mainPanel.add(pager);
+
+        //init is DB modified
+        checkModified();
 
         //Type handler
         typePanel.getListBox().addChangeHandler(new ChangeHandler() {
@@ -191,5 +234,20 @@ public class GwtApp implements EntryPoint {
         dataProvider.getList().addAll(points);
         dataProvider.flush();
         dataProvider.refresh();
+    }
+
+    public void checkModified(){
+        this.gwtAppService.getModifiedTime(new AsyncCallback<Long>() {
+            @Override
+            public void onFailure(Throwable caught) {GWT.log("Связь с сервером отсутствует");}
+            @Override
+            public void onSuccess(Long result) {
+                if (result > lastModified){
+                    lastModified = result;
+                    isModified = true;
+                }
+                else isModified = false;
+            }
+        });
     }
 }

@@ -17,7 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <tomcat.webport>8082</tomcat.webport>
         <tomcat.ajpport>8182</tomcat.ajpport>
-        <tomcat.context>/parent</tomcat.context>
+        <tomcat.context>/</tomcat.context>
     </properties>
 <!--    <dependencyManagement>
         <dependencies>

@@ -17,4 +17,6 @@ public interface GwtAppServiceAsync {
     void getAllPointsByTypeAndCountryAndSity(String type, String country, String sity, AsyncCallback<List<PointResult>> async);
 
     void getPoint(int id, AsyncCallback<PointResult> async);
+
+    void getModifiedTime(AsyncCallback<Long> async);
 }
