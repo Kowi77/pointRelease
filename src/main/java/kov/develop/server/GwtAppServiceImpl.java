@@ -15,7 +15,7 @@ public class GwtAppServiceImpl extends RemoteServiceServlet implements GwtAppSer
 
     private PointRepository repository;
     private static long lastModified;
-    private static final String dataFile = "E:\\Java\\PointRelease\\src\\main\\java\\point.xml";
+    private static final String dataFile = "point.xml";
     private final Thread loader = initLoader();
 
     public GwtAppServiceImpl() {
@@ -55,7 +55,7 @@ public class GwtAppServiceImpl extends RemoteServiceServlet implements GwtAppSer
                         PointRepository.readAllFromXml(dataFile);
                         lastModified = new File(dataFile).lastModified();
                     }
-                    System.out.println(new File(dataFile).lastModified());
+                    System.out.println(new File(dataFile).lastModified() + new File(dataFile).getAbsolutePath());
                     try {
                         Thread.sleep(10000);
                     } catch (InterruptedException e) {
