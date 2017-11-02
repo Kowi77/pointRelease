@@ -62,7 +62,6 @@ public class GwtApp implements EntryPoint {
 
             @Override
             public void onSuccess(List<PointResult> points) {
-                RootPanel.get().add(new HTML("ver 4.0"));
                 pointsList = new ArrayList<>(points);
                 refreshChoicePanelAndDataProvider(points);
             }

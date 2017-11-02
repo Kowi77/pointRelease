@@ -23,8 +23,13 @@ h1 {
     border: solid;
     border-radius: 10px;
     font-size: 20px;
+    width: max-content;
 }
 
-.listBox {
-    color: brown;
+.gwt-listBox {
+    color: darkblue;
+    margin: 10%;
+}
+.gwt-table {
+
 }
